@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ lang_dir }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TikTok Intelligence — @{{ profile.username }}</title>
+<style>
+  :root { --pink:#e0245e; --dark:#14171a; --muted:#657786; --card:#ffffff; --bg:#f5f7fa; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Segoe UI', Tahoma, Arial, sans-serif; background:var(--bg); color:var(--dark); }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+  header.hero { background: linear-gradient(135deg, #14171a 0%, #3a1c71 60%, #d76d77 100%); color:#fff; border-radius: 18px; padding: 32px; }
+  header.hero h1 { margin:0 0 6px; font-size: 26px; }
+  header.hero .meta { opacity:.85; font-size: 13px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-top: 20px; }
+  .card { background:var(--card); border-radius: 14px; padding:16px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+  .card .k { color:var(--muted); font-size:12px; }
+  .card .v { font-size:20px; font-weight:700; margin-top:4px; color:var(--pink); }
+  section { margin-top: 24px; }
+  h2 { font-size: 17px; border-inline-start: 4px solid var(--pink); padding-inline-start: 10px; }
+  table { width:100%; border-collapse: collapse; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+  th, td { padding:9px 12px; text-align: start; font-size: 13px; border-bottom: 1px solid #eef1f4; }
+  th { background: #fce4ec; color: #880e4f; }
+  tr:hover td { background:#fafafa; }
+  .badge { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; background:#fce4ec; color:#880e4f; margin-inline-end:4px; }
+  .notice { background:#fff8e1; border:1px solid #ffe082; border-radius:12px; padding:12px 16px; font-size:13px; margin-top:20px; }
+  footer { margin-top:28px; color:var(--muted); font-size:12px; text-align:center; }
+  .demo { background:#fff3e0; border:1px solid #ffcc80; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>@{{ profile.username }} {% if profile.verified %}✔️{% endif %}{% if profile.private %} 🔒{% endif %}</h1>
+    <div class="meta">{{ profile.nickname or '' }} — {{ generated_at }}</div>
+    {% if profile.bio %}<div class="meta">{{ profile.bio }}</div>{% endif %}
+    {% if profile.demo %}<div class="meta">🧪 DEMO DATA</div>{% endif %}
+  </header>
+
+  <div class="grid">
+    <div class="card"><div class="k">{{ t('f_followers') }}</div><div class="v">{{ fmt_num(profile.followers) }}</div></div>
+    <div class="card"><div class="k">{{ t('f_following') }}</div><div class="v">{{ fmt_num(profile.following) }}</div></div>
+    <div class="card"><div class="k">{{ t('f_likes') }}</div><div class="v">{{ fmt_num(profile.likes) }}</div></div>
+    <div class="card"><div class="k">{{ t('f_videos') }}</div><div class="v">{{ fmt_num(profile.videos_count) }}</div></div>
+    <div class="card"><div class="k">{{ t('f_avg_views') }}</div><div class="v">{{ fmt_num(analytics.avg_views|round|int) }}</div></div>
+    <div class="card"><div class="k">{{ t('f_engagement') }}</div><div class="v">{{ '%.2f%%'|format(analytics.engagement_rate or 0) }}</div></div>
+  </div>
+
+  <section>
+    <h2>{{ t('f_region') }} / {{ t('f_language') }}</h2>
+    <div class="card">
+      <span class="badge">{{ t('f_region') }}: {{ profile.region or t('na') }}</span>
+      <span class="badge">{{ t('f_language') }}: {{ profile.language or t('na') }}</span>
+      <span class="badge">{{ t('f_created') }}: {{ t('na') }}</span>
+    </div>
+  </section>
+
+  {% if videos %}
+  <section>
+    <h2>{{ t('sec_content') }}</h2>
+    <table>
+      <thead><tr><th>#</th><th>{{ t('view_video') }}</th><th>❤️</th><th>💬</th><th>🔁</th><th>🔖</th><th>⏱</th></tr></thead>
+      <tbody>
+      {% for v in videos %}
+        <tr><td>{{ loop.index }}</td><td>{{ fmt_num(v.views) }}</td><td>{{ fmt_num(v.likes) }}</td>
+            <td>{{ fmt_num(v.comments) }}</td><td>{{ fmt_num(v.shares) }}</td><td>{{ fmt_num(v.bookmarks) }}</td>
+            <td>{{ v.duration or '—' }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  {% if analytics.top_hashtags %}
+  <section>
+    <h2>{{ t('f_top_hashtags') }}</h2>
+    <div class="card">
+      {% for tag, n in analytics.top_hashtags %}<span class="badge">#{{ tag }} ({{ n }})</span>{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if analytics.categories %}
+  <section>
+    <h2>{{ t('f_categories') }}</h2>
+    <div class="card">
+      {% for cat, n in analytics.categories.items() %}<span class="badge">{{ cat }}: {{ n }}</span>{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <div class="notice {{ 'demo' if profile.demo else '' }}">{{ t('privacy_note') }}</div>
+
+  <footer>TikTok Intelligence Bot — {{ generated_at }} — public data only</footer>
+</div>
+</body>
+</html>

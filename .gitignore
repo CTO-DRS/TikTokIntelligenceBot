@@ -1,0 +1,41 @@
+# --- Secrets / environment ---
+.env
+docker/.env
+*.key
+data/secret.key
+
+# --- Runtime data ---
+data/
+backups/
+reports_output/
+*.log
+logs/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# --- Testing / tooling ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# --- Docker volumes mounted locally ---
+docker/postgres-data/
+docker/redis-data/
+docker/grafana-data/
