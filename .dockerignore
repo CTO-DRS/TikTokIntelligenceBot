@@ -1,0 +1,34 @@
+# --- VCS / CI ---
+.git
+.github
+.gitignore
+
+# --- Local state (never in image) ---
+.env
+docker/.env
+data/
+backups/
+reports_output/
+*.log
+logs/
+
+# --- Python junk ---
+__pycache__
+*.py[cod]
+*.egg-info
+.venv
+venv
+.pytest_cache
+.ruff_cache
+.mypy_cache
+
+# --- Docs & tests (not needed at runtime) ---
+docs/
+tests/
+CHANGELOG.md
+Makefile
+
+# --- Misc ---
+*.md
+!README.md
+.DS_Store
