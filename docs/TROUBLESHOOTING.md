@@ -103,7 +103,7 @@
 ### PDF has boxes/garbled Arabic (□□□)
 - Server lacks Arabic fonts. Docker image ships Noto Naskh; for bare-metal:
   ```bash
-  apt install fonts-noto-naskh-arabic fonts-noto-core   # Debian/Ubuntu
+  apt install fonts-noto-core   # Debian/Ubuntu — يضم Noto Naskh/Sans Arabic
   fc-cache -f
   ```
 
