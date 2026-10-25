@@ -1,5 +1,9 @@
 # 🤖 TikTok Intelligence Bot — بوت تيك توك للاستخبارات
 
+[![CI](https://github.com/CTO-DRS/TikTokIntelligenceBot/actions/workflows/ci.yml/badge.svg)](https://github.com/CTO-DRS/TikTokIntelligenceBot/actions/workflows/ci.yml)
+![Version](https://img.shields.io/badge/version-1.1.0-fe2c55)
+![Tests](https://img.shields.io/badge/tests-41%20pass-25f4ee)
+
 <p align="center">
   <b>بوت تيليجرام متكامل لتحليل وتتبع حسابات تيك توك</b><br>
   <i>A complete Telegram bot for TikTok account intelligence, analytics & tracking</i>
@@ -36,7 +40,8 @@
 - 📦 **فحص جماعي** `/bulk` — حتى 25 حساباً بالتوازي
 - ⚖️ **مقارنة** `/compare` — جدول فروقات بين حسابين
 - 🔔 **تتبع** `/track` — تنبيهات: تغيّر الاسم/النبذة/الصورة، توثيق، فيديو جديد، ±10% متابعين
-- 📄 **تقارير** `/report` — PDF (عربي RTL) + HTML + Excel (مع رسوم بيانية) + JSON
+- 📄 **تقارير** `/report` — PDF (عربي RTL) + HTML + Excel (مع رسوم بيانية) + JSON (مخطط إصداري v1.1 مع خريطة توفر كل حقل)
+- 📈 **رسوم بيانية تلقائية** مع `/deepscan` — منحنى نمو المتابعين 30 يوماً، خريطة حرارية لأوقات النشر، أعمدة الهاشتاقات، دونات التفاعل (تسميات عربية مع تراجع تلقائي للإنجليزية)
 - 🌐 **وحدة جغرافيا وأجهزة** — تحليل User-Agent / Headers / IP→Geo (geopy + reverse_geocoder + timezonefinder) بمنهجية صادقة
 - 🗂 **قوائم 3 مستويات** بأزرار داخلية + تبديل عربي/إنجليزي + 3 مستويات تفصيل (مبسط/متقدم/خبير)
 - 🛡 **أمان**: AES-256-GCM، 5 أدوار، Rate Limiting متعدد الطبقات (Redis)، سجل تدقيق، كشف محاولات الحقن، 2FA للمشرفين (TOTP)
@@ -109,8 +114,19 @@ celery -A bot.tasks worker --loglevel=info
 
 ## 🧪 الاختبارات
 ```bash
-pytest tests/ -v
+pytest tests/ -v        # 41 اختباراً
+make test               # أو عبر Makefile
 ```
+
+## 📚 التوثيق الكامل / Documentation
+| الملف | المحتوى |
+|---|---|
+| [`docs/USER_MANUAL_AR.md`](docs/USER_MANUAL_AR.md) | دليل المستخدم بالعربية (17 أمراً، القوائم، الأسئلة الشائعة) |
+| [`docs/USER_MANUAL_EN.md`](docs/USER_MANUAL_EN.md) | English user manual |
+| [`docs/API_DOCUMENTATION.md`](docs/API_DOCUMENTATION.md) | مرجع الوحدات والدوال + عقد صدق البيانات |
+| [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md) | النشر: Docker، Webhook+Nginx+TLS، التوسع الأفقي، النشر الأزرق-الأخضر |
+| [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) | استكشاف الأخطاء وإصلاحها (عَرَض ← سبب ← حل) |
+| [`CHANGELOG.md`](CHANGELOG.md) | سجل الإصدارات |
 
 ## 📜 الترخيص والاستخدام المسؤول
 MIT — لكن **مسؤوليتك القانونية عليك**: التزم بشروط خدمة تيك توك وقوانين الخصوصية (GDPR وغيرها).
