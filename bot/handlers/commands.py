@@ -87,7 +87,7 @@ async def perform_scan(update: Update, context: ContextTypes.DEFAULT_TYPE,
     profile = result.data
     snapshots = await REPO.snapshots(username, days=30)
     engine = AnalyticsEngine(snapshots=snapshots)
-    engine.analyze(profile)
+    analytics = engine.analyze(profile)
     profile["security"] = ProfileSecurityScorer.score(profile)
     if not deep:
         profile["videos"] = (profile.get("videos") or [])[:5]
@@ -111,6 +111,18 @@ async def perform_scan(update: Update, context: ContextTypes.DEFAULT_TYPE,
     await msg.edit_text(chunk, disable_web_page_preview=True)
     if len(text) > 4000:
         await update.effective_message.reply_text(text[4000:8000], disable_web_page_preview=True)
+
+    # deep scans get visual analytics attached — charts are a nicety,
+    # any failure here is logged and skipped, never fatal to the scan flow
+    if deep:
+        try:
+            from bot.services.charts import render_bundle
+            bundle = render_bundle(profile, analytics, lang)
+            for name, buf in list(bundle.items())[:3]:
+                buf.seek(0)
+                await update.effective_message.reply_photo(buf, caption=name)
+        except Exception as exc:  # noqa: BLE001
+            log.debug("chart attach skipped: %s", exc)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -345,11 +357,9 @@ async def generate_and_send_report(update: Update, context: ContextTypes.DEFAULT
         ExcelReport(lang=lang).build(profile, analytics, snapshots, path)
         kind = ReportKind.EXCEL
     else:
+        from reports.generators.json_generator import JSONReport
         path = out_dir / f"report_{safe}.json"
-        payload = {"profile": {k: v for k, v in profile.items() if k != "videos"},
-                   "videos": profile.get("videos")[:30], "analytics": _jsonable(analytics)}
-        path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str),
-                        encoding="utf-8")
+        JSONReport().build(profile, analytics, path)
         kind = ReportKind.JSON
 
     await REPO.add_report(kind=kind, path=str(path), size_bytes=path.stat().st_size,
@@ -357,16 +367,6 @@ async def generate_and_send_report(update: Update, context: ContextTypes.DEFAULT
     with path.open("rb") as fh:
         await update.effective_message.reply_document(fh, filename=path.name)
     await status.edit_text(t(lang, "report_done"))
-
-
-def _jsonable(obj: object) -> object:
-    if isinstance(obj, dict):
-        return {str(k): _jsonable(v) for k, v in obj.items()}
-    if isinstance(obj, (list, tuple)):
-        return [_jsonable(v) for v in obj]
-    if isinstance(obj, (int, float, str, bool)) or obj is None:
-        return obj
-    return str(obj)
 
 
 @guard("export", limit=3)
