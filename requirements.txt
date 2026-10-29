@@ -31,7 +31,7 @@ redis==5.0.4
 celery==5.4.0
 
 # --- Security ---
-cryptography==49.0.0
+cryptography==50.0.0
 pyotp==2.9.0
 qrcode==7.4.2
 Pillow==13.0.0
